@@ -8,3 +8,14 @@
     box-sizing: border-box !important;
   }
   
+  .font-red {
+    color: #C75646;
+  }
+
+  .font-green {
+    color: #CDEE69;
+  }
+
+  .italic {
+    font-style: italic;
+  }

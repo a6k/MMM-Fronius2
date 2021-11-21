@@ -25,8 +25,8 @@ module.exports = NodeHelper.create({
         const data = await this.fetcher.fetch();
         this.sendSocketNotification("MMM-Fronius2_DATA", data);    
     } catch (error) {
-        console.log(error);
-        if(error.msg === "RequestAborted") {
+        if(error.message === "RequestTimeout") {
+            console.log("Data fetch from Fronius power converter timed out.")
             this.sendSocketNotification("MMM-Fronius2_ERROR_FETCH_TIMEOUT")
         }
     }

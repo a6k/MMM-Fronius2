@@ -4,5 +4,8 @@
   "ENERGY_TOTAL": "Total",
   "ENERGY_DAY": "Today",
   "ENERGY_YEAR": "Year",
-  "ENERGY_NOW": "Now"
+  "ENERGY_NOW": "Now",
+  "CONVERTER_OFFLINE": "Offline",
+  "SHOWING_CACHED_DATA": "Showing cached data",
+  "NO_DATA": "No data"
 }

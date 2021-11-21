@@ -14,13 +14,16 @@ Module.register("MMM-Fronius2", {
     header: "PV Anlage",
     hidden: false,
     ip: "192.168.200.173",
-    requestTimeout: 1500,
+    updateInterval: 3000,
     kwConversionOptions: {
       enabled: true,
       threshold: 1200,
       numDecimalDigits: 2,
     },
-    updateInterval: 3000
+    offlineDetectionOptions: {
+      numRequests: 5,           // Converter is considered offline after this num of failed requests
+      offlineInterval: 1800000  // 30 Minutes
+    }
   },
 
   requiresVersion: "2.17.0", // Required version of MagicMirror
@@ -28,6 +31,9 @@ Module.register("MMM-Fronius2", {
   start: function () {
     this.data.header = this.config.header;
     this.currentData = null;
+    this.ecIsOffline = false;
+    this.offlineDetectionCounter = 0;
+    this.fetchTimeoutError = false;
     this.loaded = false;
 
     this.sendSocketNotification("MMM-Fronius2_INIT", this.config);
@@ -36,9 +42,11 @@ Module.register("MMM-Fronius2", {
   },
 
   scheduleUpdate: function () {
-    setInterval(() => {
+    const updateInterval = this.ecIsOffline ? this.config.offlineDetectionOptions.offlineInterval : this.config.updateInterval;
+
+    this.fetchInterval = setInterval(() => {
       this.sendSocketNotification("MMM-Fronius2_FETCH_DATA");
-    }, this.config.updateInterval);
+    }, updateInterval);
   },
 
   getDom: function () {
@@ -47,19 +55,31 @@ Module.register("MMM-Fronius2", {
     wrapper.id = "fronius2-wrapper";
     wrapper.style.width = `${this.config.width}px`;
 
-    if (this.currentData === null && !this.loaded) {
+    if (!this.loaded) {
       wrapper.className = "small light dimmed";
       wrapper.innerHTML = `${this.translate("LOADING")}...`;
       return wrapper;
     }
 
-    // Table for displaying Values
-    const tableWrapper = document.createElement("div");
-    tableWrapper.id = "table-wrapper";
-    const table = this.generateDataTable();
-    tableWrapper.appendChild(table);
+    if (this.currentData === null) {
+      wrapper.className = "small light dimmed";
+      wrapper.innerHTML = `${this.translate("NO_DATA")}`;
+    } else {
+      // Table for displaying Values
+      const tableWrapper = document.createElement("div");
+      tableWrapper.id = "table-wrapper";
+      const table = this.generateDataTable();
+      tableWrapper.appendChild(table);
 
-    wrapper.appendChild(tableWrapper);
+      wrapper.appendChild(tableWrapper);
+
+      if(this.fetchTimeoutError) {
+        const hintDiv = document.createElement("div");
+        hintDiv.className = "xsmall light dimmed italic";
+        hintDiv.textContent = `${this.translate("SHOWING_CACHED_DATA")}`;
+        wrapper.appendChild(hintDiv);
+      }
+    }
 
     return wrapper;
   },
@@ -68,8 +88,14 @@ Module.register("MMM-Fronius2", {
     const table = document.createElement("table");
 
     const energyNowDescription = `${this.translate("ENERGY_NOW")}:`;
-    const energyNowValue = this.getWattString(this.currentData.energyNow);
-    this.appendTableRow(energyNowDescription, energyNowValue, table);
+    if(this.fetchTimeoutError) {
+      const energyNowValue = this.translate("CONVERTER_OFFLINE");
+      this.appendTableRow(energyNowDescription, energyNowValue, table, "font-red");
+    } else {
+      const energyNowValue = this.getWattString(this.currentData.energyNow);
+      const valueColor = this.currentData.energyNow > 0 ? "font-green" : null;
+      this.appendTableRow(energyNowDescription, energyNowValue, table, valueColor);
+    }
 
     const energyDayDescription = `${this.translate("ENERGY_DAY")}:`;
     const energyDayValue = this.getWattString(this.currentData.energyDay);
@@ -86,7 +112,7 @@ Module.register("MMM-Fronius2", {
     return table;
   },
 
-  appendTableRow: function (description, value, table) {
+  appendTableRow: function (description, value, table, cssClassValue = null) {
     const row = document.createElement("tr");
 
     const descriptionColumn = document.createElement("td");
@@ -95,6 +121,9 @@ Module.register("MMM-Fronius2", {
 
     const valueColumn = document.createElement("td");
     valueColumn.textContent = value;
+    if(cssClass) {
+      valueColumn.className = cssClass;
+    }
     row.appendChild(valueColumn);
 
     table.appendChild(row);
@@ -134,7 +163,26 @@ Module.register("MMM-Fronius2", {
     }
 
     if (notification === "MMM-Fronius2_DATA") {
+      this.fetchTimeout = false;
+      this.ecIsOffline = false;
+      this.offlineDetectionCounter = 0;
       this.currentData = payload;
+      this.updateDom();
+    }
+
+    if (notification === "MMM-Fronius2_ERROR_FETCH_TIMEOUT") {
+      this.fetchTimeout = true;
+
+      if(this.offlineDetectionCounter < this.config.offlineDetectionOptions.numRequests) {
+        this.offlineDetectionCounter += 1;
+        Log.info(`Fronius data fetch timed out. Failed request #${this.offlineDetectionCounter}`);
+      } else if (!this.ecIsOffline) {
+        Log.info(`Fronius Converter is offline. Re-setting fetch interval to ${this.config.offlineDetectionOptions.offlineInterval}ms`)
+        this.ecIsOffline = true;
+        clearInterval(this.fetchInterval);
+        this.scheduleUpdate();
+      }
+
       this.updateDom();
     }
   },

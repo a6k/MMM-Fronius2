@@ -1,7 +1,11 @@
 {
   "TITLE": "Titel",
+  "LOADING": "Laden",
   "ENERGY_TOTAL": "Gesamt",
   "ENERGY_DAY": "Heute",
   "ENERGY_YEAR": "Jahr",
-  "ENERGY_NOW": "Aktuell"
+  "ENERGY_NOW": "Aktuell",
+  "CONVERTER_OFFLINE": "Offline",
+  "SHOWING_CACHED_DATA": "Daten von letzter erfolgreicher Abfrage",
+  "NO_DATA": "Keine Daten"
 }
