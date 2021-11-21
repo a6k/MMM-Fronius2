@@ -5,7 +5,9 @@
   "ENERGY_DAY": "Heute",
   "ENERGY_YEAR": "Jahr",
   "ENERGY_NOW": "Aktuell",
-  "CONVERTER_OFFLINE": "Offline",
+  "CONVERTER_OFFLINE_ENERGY_STATE": "Offline",
+  "CONVERTER_OFFLINE_HINT": "Converter ist offline",
   "SHOWING_CACHED_DATA": "Daten von letzter erfolgreicher Abfrage",
   "NO_DATA": "Keine Daten"
+
 }

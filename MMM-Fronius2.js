@@ -63,7 +63,10 @@ Module.register("MMM-Fronius2", {
 
     if (this.currentData === null) {
       wrapper.className = "small light dimmed";
-      wrapper.innerHTML = `${this.translate("NO_DATA")}`;
+      wrapper.innerHTML = this.translate("NO_DATA");
+      if(this.fetchTimeoutError) {
+        wrapper.innerHTML += `<br> (${this.translate("CONVERTER_OFFLINE_HINT")})`;
+      }
     } else {
       // Table for displaying Values
       const tableWrapper = document.createElement("div");
@@ -89,7 +92,7 @@ Module.register("MMM-Fronius2", {
 
     const energyNowDescription = `${this.translate("ENERGY_NOW")}:`;
     if(this.fetchTimeoutError) {
-      const energyNowValue = this.translate("CONVERTER_OFFLINE");
+      const energyNowValue = this.translate("CONVERTER_OFFLINE_ENERGY_STATE");
       this.appendTableRow(energyNowDescription, energyNowValue, table, "font-red");
     } else {
       const energyNowValue = this.getWattString(this.currentData.energyNow);
