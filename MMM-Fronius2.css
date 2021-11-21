@@ -1,0 +1,10 @@
+   /* Battery example from https://codepen.io/nonggolf/pen/gOOvEeK */
+
+   #fronius2-wrapper {
+    font-size: 22px;
+    font-weight: normal;
+    line-height: 1.5;
+    display: block;
+    box-sizing: border-box !important;
+  }
+  

@@ -1,0 +1,34 @@
+{
+  "name": "mmm-fronius2",
+  "version": "0.1.0",
+  "description": "MagicMirror module to show information about Fronius power inverter",
+  "main": "MMM-Fronius2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deg0nz/MMM-Fronius2.git"
+  },
+  "keywords": [
+    "magicmirror",
+    "varta",
+    "energy",
+    "storage",
+    "system",
+    "modbus"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "author": "Beh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deg0nz/MMM-Fronius2/issues"
+  },
+  "homepage": "https://github.com/deg0nz/MMM-Fronius2#readme",
+  "dependencies": {
+    "node-abort-controller": "^3.0.1",
+    "node-fetch": "^2.6.6"
+  }
+}
