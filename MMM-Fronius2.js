@@ -166,15 +166,20 @@ Module.register("MMM-Fronius2", {
     }
 
     if (notification === "MMM-Fronius2_DATA") {
-      this.fetchTimeout = false;
-      this.ecIsOffline = false;
-      this.offlineDetectionCounter = 0;
+      this.fetchTimeoutError = false;
       this.currentData = payload;
       this.updateDom();
+
+      if(this.ecIsOffline) {
+        this.ecIsOffline = false;
+        this.offlineDetectionCounter = 0;
+        clearInterval(this.fetchInterval);
+        this.scheduleUpdate();
+      }
     }
 
     if (notification === "MMM-Fronius2_ERROR_FETCH_TIMEOUT") {
-      this.fetchTimeout = true;
+      this.fetchTimeoutError = true;
 
       if(this.offlineDetectionCounter < this.config.offlineDetectionOptions.numRequests) {
         this.offlineDetectionCounter += 1;
