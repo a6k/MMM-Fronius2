@@ -13,7 +13,7 @@ Module.register("MMM-Fronius2", {
     hidden: false,
     ip: "192.168.200.173",
     updateInterval: 3000,
-    kwConversionOptions: {
+    wattConversionOptions: {
       enabled: true,
       threshold: 1200,
       numDecimalDigits: 2,
@@ -141,13 +141,37 @@ Module.register("MMM-Fronius2", {
   },
 
   getWattString: function (value) {
-    const roundedValue = Math.round(value);
-    const kwConversionOptions = this.config.kwConversionOptions;
-    if (kwConversionOptions.enabled && roundedValue > kwConversionOptions.threshold) {
-      return `${(roundedValue / 1000).toFixed(kwConversionOptions.numDecimalDigits)} kW`;
+    const wattConversionOptions = this.config.wattConversionOptions;
+    const threshold = wattConversionOptions.threshold;
+    let wattString = "W";
+    let displayValue = value;
+
+    if(wattConversionOptions.enabled) {
+      switch(true) {
+        // gigaWatt
+        case value > (threshold * Math.pow(1000, 2)):
+          displayValue = (value / Math.pow(1000, 3)).toFixed(wattConversionOptions.numDecimalDigits);
+          wattString = "gW";
+          break;
+        // megaWatt
+        case value > (threshold * 1000):
+          displayValue = (value / Math.pow(1000, 2)).toFixed(wattConversionOptions.numDecimalDigits);
+          wattString = "mW";
+          break;
+        // kiloWatt
+        case value > threshold:
+          displayValue = (value / 1000).toFixed(wattConversionOptions.numDecimalDigits);
+          wattString = "kW";
+          break;
+        default:
+          displayValue = Math.round(value);
+          wattString = "W";
+      }
+    } else {
+      displayValue = Math.round(value);
     }
 
-    return `${roundedValue} W`;
+    return `${displayValue} ${wattString}`;
   },
 
   getScripts: function () {
