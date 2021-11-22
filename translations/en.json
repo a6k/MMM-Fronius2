@@ -1,12 +1,12 @@
 {
-  "TITLE": "Title",
-  "LOADING": "Loading",
-  "ENERGY_TOTAL": "Total",
-  "ENERGY_DAY": "Today",
-  "ENERGY_YEAR": "Year",
-  "ENERGY_NOW": "Now",
-  "CONVERTER_OFFLINE_ENERGY_STATE": "Offline",
-  "CONVERTER_OFFLINE_HINT": "Converter is offline",
-  "SHOWING_CACHED_DATA": "Showing cached data",
-  "NO_DATA": "No data"
+    "TITLE": "Title",
+    "LOADING": "Loading",
+    "ENERGY_TOTAL": "Total",
+    "ENERGY_DAY": "Today",
+    "ENERGY_YEAR": "Year",
+    "ENERGY_NOW": "Now",
+    "CONVERTER_OFFLINE_ENERGY_STATE": "Offline",
+    "CONVERTER_OFFLINE_HINT": "Converter is offline",
+    "SHOWING_CACHED_DATA": "Showing cached data",
+    "NO_DATA": "No data"
 }

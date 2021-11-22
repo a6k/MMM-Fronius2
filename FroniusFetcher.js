@@ -5,62 +5,66 @@ const fetch = require("node-fetch");
 const AbortController = require("node-abort-controller").AbortController;
 
 class FroniusFetcher {
-  constructor(config) {
-    this.requestTimeout = config.requestTimeout;
-    this.url = `http://${config.ip}/solar_api/v1/GetPowerFlowRealtimeData.fcgi`;
-  }
-
-  async fetch() {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, this.requestTimeout);
-
-    try {
-      const response = await fetch(this.url, { signal: controller.signal });
-      const rawData = await response.json();
-      const convertedData = this.convertSiteData(rawData);
-      return convertedData;
-    } catch (error) {
-      if (error.type === "aborted") {
-        throw new Error("RequestTimeout");
-      }
-
-      console.error(error);
-    } finally {
-      clearTimeout(timeout);
+    constructor(config) {
+        this.requestTimeout = config.requestTimeout;
+        this.url = `http://${config.ip}/solar_api/v1/GetPowerFlowRealtimeData.fcgi`;
     }
-  }
 
-  convertSiteData(rawData) {
-    const targetData = rawData.Body.Data.Site;
-    const convertedData = {
-      energyDay: targetData.E_Day,
-      energyTotal: targetData.E_Total,
-      energyYear: targetData.E_Year,
-      energyNow: targetData.P_PV,
-      meterLocation: targetData.Meter_Location,
-      mode: targetData.Mode,
-      powerAkku: targetData.P_Akku,
-      powerGrid: targetData.P_Grid,
-      powerLoad: targetData.P_Load,
-      autonomy: targetData.rel_Autonomy,
-      selfConsumption: targetData.rel_SelfConsumption,
-    };
+    async fetch() {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => {
+            controller.abort();
+        }, this.requestTimeout);
 
-    return convertedData;
-  }
+        try {
+            const response = await fetch(this.url, { signal: controller.signal });
+            const rawData = await response.json();
+            const convertedData = this.convertSiteData(rawData);
+            return convertedData;
+        } catch (error) {
+            if (error.type === "aborted") {
+                throw new Error("RequestTimeout");
+            }
 
-  fetchDummyData() {
-    const convertedData = {
-      energyDay: 2000.7000732421875,
-      energyTotal: 15107.0009765625,
-      energyYear: 15107.5,
-      currentEnergy: 123475,
-    };
+            console.error(error);
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
 
-    return convertedData;
-  }
+    convertSiteData(rawData) {
+        const targetData = rawData.Body.Data.Site;
+        const convertedData = {
+            energyDay: targetData.E_Day,
+            energyTotal: targetData.E_Total,
+            energyYear: targetData.E_Year,
+            energyNow: targetData.P_PV,
+            meterLocation: targetData.Meter_Location,
+            mode: targetData.Mode,
+            powerAkku: targetData.P_Akku,
+            powerGrid: targetData.P_Grid,
+            powerLoad: targetData.P_Load,
+            autonomy: targetData.rel_Autonomy,
+            selfConsumption: targetData.rel_SelfConsumption,
+        };
+
+        return convertedData;
+    }
+
+    fetchDummyData() {
+        const convertedData = {
+            energyDay: this._getRandomArbitrary(1000, 50000),
+            energyTotal: this._getRandomArbitrary(50000, 5000000),
+            energyYear: this._getRandomArbitrary(20000, 500000),
+            currentEnergy: this._getRandomArbitrary(1, 10000),
+        };
+
+        return convertedData;
+    }
+
+    _getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
 }
 
 module.exports = FroniusFetcher;

@@ -1,21 +1,21 @@
-   /* Battery example from https://codepen.io/nonggolf/pen/gOOvEeK */
+/* Battery example from https://codepen.io/nonggolf/pen/gOOvEeK */
 
-   #fronius2-wrapper {
+#fronius2-wrapper {
     font-size: 22px;
     font-weight: normal;
     line-height: 1.5;
     display: block;
     box-sizing: border-box !important;
-  }
-  
-  .font-red {
-    color: #C75646;
-  }
+}
 
-  .font-green {
-    color: #CDEE69;
-  }
+.font-red {
+    color: #c75646;
+}
 
-  .italic {
+.font-green {
+    color: #cdee69;
+}
+
+.italic {
     font-style: italic;
-  }
+}
