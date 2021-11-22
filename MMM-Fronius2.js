@@ -1,6 +1,4 @@
 "use strict";
-/* global Module */
-
 /* Magic Mirror
  * Module: MMM-Fronius2
  *
@@ -21,9 +19,10 @@ Module.register("MMM-Fronius2", {
       numDecimalDigits: 2,
     },
     offlineDetectionOptions: {
-      numRequests: 5,           // Converter is considered offline after this num of failed requests
-      offlineInterval: 1800000  // 30 Minutes
-    }
+      numRequests: 5, // Converter is considered offline after this num of failed requests
+      offlineInterval: 1800000, // 30 Minutes
+    },
+    requestTimeout: 1000,
   },
 
   requiresVersion: "2.17.0", // Required version of MagicMirror
@@ -42,10 +41,17 @@ Module.register("MMM-Fronius2", {
   },
 
   scheduleUpdate: function () {
-    const updateInterval = this.ecIsOffline ? this.config.offlineDetectionOptions.offlineInterval : this.config.updateInterval;
+    console.log("scheduleUpdate called");
+
+    const updateInterval = this.ecIsOffline
+      ? this.config.offlineDetectionOptions.offlineInterval
+      : this.config.updateInterval;
+    console.log(`Update interval: ${updateInterval}ms`);
 
     this.fetchInterval = setInterval(() => {
-      this.sendSocketNotification("MMM-Fronius2_FETCH_DATA");
+      if(this.loaded) {
+        this.sendSocketNotification("MMM-Fronius2_FETCH_DATA");
+      }
     }, updateInterval);
   },
 
@@ -55,7 +61,7 @@ Module.register("MMM-Fronius2", {
     wrapper.id = "fronius2-wrapper";
     wrapper.style.width = `${this.config.width}px`;
 
-    if (!this.loaded) {
+    if (this.currentData === null && !this.loaded) {
       wrapper.className = "small light dimmed";
       wrapper.innerHTML = `${this.translate("LOADING")}...`;
       return wrapper;
@@ -64,7 +70,7 @@ Module.register("MMM-Fronius2", {
     if (this.currentData === null) {
       wrapper.className = "small light dimmed";
       wrapper.innerHTML = this.translate("NO_DATA");
-      if(this.fetchTimeoutError) {
+      if (this.fetchTimeoutError) {
         wrapper.innerHTML += `<br> (${this.translate("CONVERTER_OFFLINE_HINT")})`;
       }
     } else {
@@ -76,7 +82,7 @@ Module.register("MMM-Fronius2", {
 
       wrapper.appendChild(tableWrapper);
 
-      if(this.fetchTimeoutError) {
+      if (this.fetchTimeoutError) {
         const hintDiv = document.createElement("div");
         hintDiv.className = "xsmall light dimmed italic";
         hintDiv.textContent = `${this.translate("SHOWING_CACHED_DATA")}`;
@@ -87,11 +93,13 @@ Module.register("MMM-Fronius2", {
     return wrapper;
   },
 
+  // TODO: Generate all available data here and make the data excludable
+  // This will need the usage of the default API keys so the user can exclude these
   generateDataTable: function () {
     const table = document.createElement("table");
 
     const energyNowDescription = `${this.translate("ENERGY_NOW")}:`;
-    if(this.fetchTimeoutError) {
+    if (this.fetchTimeoutError) {
       const energyNowValue = this.translate("CONVERTER_OFFLINE_ENERGY_STATE");
       this.appendTableRow(energyNowDescription, energyNowValue, table, "font-red");
     } else {
@@ -124,8 +132,8 @@ Module.register("MMM-Fronius2", {
 
     const valueColumn = document.createElement("td");
     valueColumn.textContent = value;
-    if(cssClass) {
-      valueColumn.className = cssClass;
+    if (cssClassValue) {
+      valueColumn.className = cssClassValue;
     }
     row.appendChild(valueColumn);
 
@@ -161,6 +169,7 @@ Module.register("MMM-Fronius2", {
   // socketNotificationReceived from helper
   socketNotificationReceived: function (notification, payload) {
     if (notification === "MMM-Fronius2_INITIALIZED") {
+      console.log("INIT received");
       this.loaded = true;
       this.scheduleUpdate();
     }
@@ -181,14 +190,14 @@ Module.register("MMM-Fronius2", {
     if (notification === "MMM-Fronius2_ERROR_FETCH_TIMEOUT") {
       this.fetchTimeoutError = true;
 
-      if(this.offlineDetectionCounter < this.config.offlineDetectionOptions.numRequests) {
+      if (this.offlineDetectionCounter < this.config.offlineDetectionOptions.numRequests) {
         this.offlineDetectionCounter += 1;
         Log.info(`Fronius data fetch timed out. Failed request #${this.offlineDetectionCounter}`);
       } else if (!this.ecIsOffline) {
-        Log.info(`Fronius Converter is offline. Re-setting fetch interval to ${this.config.offlineDetectionOptions.offlineInterval}ms`)
         this.ecIsOffline = true;
         clearInterval(this.fetchInterval);
         this.scheduleUpdate();
+        Log.info(`Fronius Converter is offline. Changing fetch interval.`);
       }
 
       this.updateDom();

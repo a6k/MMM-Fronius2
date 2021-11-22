@@ -10,7 +10,7 @@ const NodeHelper = require("node_helper");
 const FroniusFetcher = require("./FroniusFetcher");
 
 module.exports = NodeHelper.create({
-  initialize: async function (config) {
+  initialize: function (config) {
     if (typeof this.fetcher === "undefined") {
       this.fetcher = new FroniusFetcher(config);
       this.sendSocketNotification("MMM-Fronius2_INITIALIZED");
@@ -18,17 +18,16 @@ module.exports = NodeHelper.create({
   },
 
   fetchData: async function () {
-    if(typeof this.fetcher === "undefined")
-        return;
+    if (typeof this.fetcher === "undefined") return;
 
     try {
-        const data = await this.fetcher.fetch();
-        this.sendSocketNotification("MMM-Fronius2_DATA", data);    
+      const data = await this.fetcher.fetch();
+      this.sendSocketNotification("MMM-Fronius2_DATA", data);
     } catch (error) {
-        if(error.message === "RequestTimeout") {
-            console.log("Data fetch from Fronius power converter timed out.")
-            this.sendSocketNotification("MMM-Fronius2_ERROR_FETCH_TIMEOUT")
-        }
+      if (error.message === "RequestTimeout") {
+        console.log("Data fetch from Fronius power converter timed out.");
+        this.sendSocketNotification("MMM-Fronius2_ERROR_FETCH_TIMEOUT");
+      }
     }
   },
 
