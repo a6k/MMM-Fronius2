@@ -8,15 +8,16 @@ class FroniusFetcher {
   constructor(config) {
     this.requestTimeout = config.requestTimeout;
     this.url = `http://${config.ip}/solar_api/v1/GetPowerFlowRealtimeData.fcgi`;
-    this.controller = new AbortController();
-    this.timeout = setTimeout(() => {
-      this.controller.abort();
-    }, 1000);
   }
 
   async fetch() {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, this.requestTimeout);
+
     try {
-      const response = await fetch(this.url, { signal: this.controller.signal });
+      const response = await fetch(this.url, { signal: controller.signal });
       const rawData = await response.json();
       const convertedData = this.convertSiteData(rawData);
       return convertedData;
@@ -27,7 +28,7 @@ class FroniusFetcher {
 
       console.error(error);
     } finally {
-      clearTimeout(this.timeout);
+      clearTimeout(timeout);
     }
   }
 
@@ -38,14 +39,19 @@ class FroniusFetcher {
       energyTotal: targetData.E_Total,
       energyYear: targetData.E_Year,
       energyNow: targetData.P_PV,
+      meterLocation: targetData.Meter_Location,
+      mode: targetData.Mode,
+      powerAkku: targetData.P_Akku,
+      powerGrid: targetData.P_Grid,
+      powerLoad: targetData.P_Load,
+      autonomy: targetData.rel_Autonomy,
+      selfConsumption: targetData.rel_SelfConsumption,
     };
 
     return convertedData;
   }
 
   fetchDummyData() {
-    // const currentEnergy = Math.floor(Math.random() * 10000) + 1;
-    console.log(currentEnergy);
     const convertedData = {
       energyDay: 2000.7000732421875,
       energyTotal: 15107.0009765625,
