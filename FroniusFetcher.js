@@ -8,9 +8,14 @@ class FroniusFetcher {
     constructor(config) {
         this.requestTimeout = config.requestTimeout;
         this.url = `http://${config.ip}/solar_api/v1/GetPowerFlowRealtimeData.fcgi`;
+        this.dummyData = config.dummyData;
     }
 
     async fetch() {
+        if(this.dummyData) {
+            return this.fetchDummyData();
+        }
+
         const controller = new AbortController();
         const timeout = setTimeout(() => {
             controller.abort();

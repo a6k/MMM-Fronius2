@@ -26,6 +26,7 @@ Module.register("MMM-Fronius2", {
         broadcastSolarPower: false,
         broadcastGridPower: false,
         broadcastBatteryPower: false,
+        dummyData: false,
     },
 
     requiresVersion: "2.17.0", // Required version of MagicMirror

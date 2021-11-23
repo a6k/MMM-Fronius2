@@ -21,8 +21,7 @@ module.exports = NodeHelper.create({
         if (typeof this.fetcher === "undefined") return;
 
         try {
-            // const data = await this.fetcher.fetch();
-            const data = await this.fetcher.fetchDummyData();
+            const data = await this.fetcher.fetch();
             this.sendSocketNotification("MMM-Fronius2_DATA", data);
         } catch (error) {
             if (error.message === "RequestTimeout") {
