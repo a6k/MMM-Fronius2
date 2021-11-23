@@ -204,7 +204,7 @@ Module.register("MMM-Fronius2", {
 
         if (notification === "MMM-Fronius2_DATA") {
             if(this.config.broadcastSolarPower) {
-                this.sendNotification("MMM-EnergyMonitor_SOLAR_POWER_UPDATE", payload.eneryNow);
+                this.sendNotification("MMM-EnergyMonitor_SOLAR_POWER_UPDATE", payload.energyNow);
             }
 
             // From docs: this value is null if no meter is enabled ( + from grid, - to grid )
