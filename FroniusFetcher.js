@@ -38,7 +38,7 @@ class FroniusFetcher {
             energyDay: targetData.E_Day,
             energyTotal: targetData.E_Total,
             energyYear: targetData.E_Year,
-            energyNow: targetData.P_PV,
+            energyNow: targetData.P_PV, //TODO: Rename this
             meterLocation: targetData.Meter_Location,
             mode: targetData.Mode,
             powerAkku: targetData.P_Akku,

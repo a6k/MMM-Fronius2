@@ -23,6 +23,9 @@ Module.register("MMM-Fronius2", {
             offlineInterval: 1800000, // 30 Minutes
         },
         requestTimeout: 1000,
+        broadcastSolarPower: false,
+        broadcastGridPower: false,
+        broadcastBatteryPower: false,
     },
 
     requiresVersion: "2.17.0", // Required version of MagicMirror
@@ -199,6 +202,22 @@ Module.register("MMM-Fronius2", {
         }
 
         if (notification === "MMM-Fronius2_DATA") {
+            if(this.config.broadcastSolarPower) {
+                this.sendNotification("MMM-EnergyMonitor_SOLAR_POWER_UPDATE", payload.eneryNow);
+            }
+
+            // From docs: this value is null if no meter is enabled ( + from grid, - to grid )
+            // MMM-EnergyMonitor expects negative: consume from grid | positive: feed to grid
+            if(this.config.broadcastGridPower) {
+                this.sendNotification("MMM-EnergyMonitor_GRID_POWER_UPDATE", (payload.powerGrid * -1));
+            }
+
+            // From docs: this value is null if no battery is active ( - charge, + discharge )
+            //  MMM-EnergyMonitor expects negative: discharge | positive: charge
+            if(this.config.broadcastBatteryPower) {
+                this.sendNotification("MMM-EnergyMonitor_ENERGY_STORAGE_POWER_UPDATE", (payload.powerAkku * -1));
+            }
+
             this.fetchTimeoutError = false;
             this.currentData = payload;
             this.updateDom();
