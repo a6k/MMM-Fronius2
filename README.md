@@ -22,7 +22,7 @@ This means: I'm open for feature requests, pull requests, bug reports, ...
 
 Offline converter:
 
-![](assets/screenshot-offline-converter.png | width=200)
+![](./assets/screenshot-offline-converter.png)
 
 ## Using the module
 
