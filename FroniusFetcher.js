@@ -61,7 +61,7 @@ class FroniusFetcher {
             energyDay: this._getRandomArbitrary(1000, 50000),
             energyTotal: this._getRandomArbitrary(50000, 5000000),
             energyYear: this._getRandomArbitrary(20000, 500000),
-            currentEnergy: this._getRandomArbitrary(1, 10000),
+            energyNow: this._getRandomArbitrary(1, 10000)
         };
 
         return convertedData;
