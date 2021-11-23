@@ -11,7 +11,7 @@ Module.register("MMM-Fronius2", {
         name: "MMM-Fronius2",
         header: "PV Anlage",
         hidden: false,
-        ip: "192.168.200.173",
+        ip: "192.168.1.12",
         updateInterval: 3000,
         wattConversionOptions: {
             enabled: true,
@@ -66,13 +66,13 @@ Module.register("MMM-Fronius2", {
         wrapper.style.width = `${this.config.width}px`;
 
         if (this.currentData === null && !this.loaded) {
-            wrapper.className = "small light dimmed";
+            wrapper.classList.add("small", "light", "dimmed");
             wrapper.innerHTML = `${this.translate("LOADING")}...`;
             return wrapper;
         }
 
         if (this.currentData === null) {
-            wrapper.className = "small light dimmed";
+            wrapper.classList.add("small", "light", "dimmed");
             wrapper.innerHTML = this.translate("NO_DATA");
             if (this.fetchTimeoutError) {
                 wrapper.innerHTML += `<br> (${this.translate("CONVERTER_OFFLINE_HINT")})`;
@@ -88,7 +88,7 @@ Module.register("MMM-Fronius2", {
 
             if (this.fetchTimeoutError) {
                 const hintDiv = document.createElement("div");
-                hintDiv.className = "xsmall light dimmed italic";
+                hintDiv.classList.add("xsmall", "light", "dimmed", "italic");
                 hintDiv.textContent = `${this.translate("SHOWING_CACHED_DATA")}`;
                 wrapper.appendChild(hintDiv);
             }
@@ -137,7 +137,7 @@ Module.register("MMM-Fronius2", {
         const valueColumn = document.createElement("td");
         valueColumn.textContent = value;
         if (cssClassValue) {
-            valueColumn.className = cssClassValue;
+            valueColumn.classList.add(cssClassValue);
         }
         row.appendChild(valueColumn);
 
@@ -147,7 +147,7 @@ Module.register("MMM-Fronius2", {
     getWattString: function (value) {
         const wattConversionOptions = this.config.wattConversionOptions;
         const threshold = wattConversionOptions.threshold;
-        let wattString = "W";
+        let unitString = "W";
         let displayValue = value;
 
         if (wattConversionOptions.enabled) {
@@ -155,31 +155,27 @@ Module.register("MMM-Fronius2", {
                 // gigaWatt
                 case value > threshold * Math.pow(1000, 2):
                     displayValue = (value / Math.pow(1000, 3)).toFixed(wattConversionOptions.numDecimalDigits);
-                    wattString = "gW";
+                    unitString = "gW";
                     break;
                 // megaWatt
                 case value > threshold * 1000:
                     displayValue = (value / Math.pow(1000, 2)).toFixed(wattConversionOptions.numDecimalDigits);
-                    wattString = "mW";
+                    unitString = "mW";
                     break;
                 // kiloWatt
                 case value > threshold:
                     displayValue = (value / 1000).toFixed(wattConversionOptions.numDecimalDigits);
-                    wattString = "kW";
+                    unitString = "kW";
                     break;
                 default:
                     displayValue = Math.round(value);
-                    wattString = "W";
+                    unitString = "W";
             }
         } else {
             displayValue = Math.round(value);
         }
 
-        return `${displayValue} ${wattString}`;
-    },
-
-    getScripts: function () {
-        return [];
+        return `${displayValue} ${unitString}`;
     },
 
     getStyles: function () {
