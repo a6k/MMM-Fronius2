@@ -68,7 +68,7 @@ Please refer to [MMM-Fronius2 default configuration](MMM-Fronius2.js) to prevent
 
 ## Issues
 
-If you find any problems, bugs or have questions, please open a [GitHub issue](https://github.com/deg0nz/MMM-EnergyMonitor/issues) in this repository.
+If you find any problems, bugs or have questions, please open a [GitHub issue](https://github.com/deg0nz/MMM-Fronius2/issues) in this repository.
 
 ## Disclaimer
 
