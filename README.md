@@ -12,6 +12,10 @@ The module has the following features:
 * Detect offline converter and show last fetched data
 * Send power data to [MMM-EnergyMonitor](https://github.com/deg0nz/MMM-EnergyMonitor) (see below)
 
+*A word about extendability:*
+
+The module is designed in a way, that is is easily possible to support other power converters as well (depending on the fact that the devices have an interface to access data). If you have the need to support another manufacturer, please [create an issue](https://github.com/deg0nz/MMM-Fronius2/issues) and/or create a pull request :).
+
 ## Status
 
 The current development status of this module is: **maintained**
