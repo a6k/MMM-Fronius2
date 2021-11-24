@@ -27,7 +27,7 @@ class FroniusFetcher {
             const convertedData = this.convertSiteData(rawData);
             return convertedData;
         } catch (error) {
-            if (error.type === "aborted") {
+            if (error.type === "aborted" || error.code === "EHOSTUNREACH") {
                 throw new Error("RequestTimeout");
             }
 
