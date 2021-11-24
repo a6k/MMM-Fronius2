@@ -45,12 +45,10 @@ Module.register("MMM-Fronius2", {
     },
 
     scheduleUpdate: function () {
-        console.log("scheduleUpdate called");
-
         const updateInterval = this.ecIsOffline
             ? this.config.offlineDetectionOptions.offlineInterval
             : this.config.updateInterval;
-        console.log(`Update interval: ${updateInterval}ms`);
+        console.log(`MMM-Fronius2 update interval set to ${updateInterval}ms`);
 
         this.fetchInterval = setInterval(() => {
             if (this.loaded) {
