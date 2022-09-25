@@ -150,20 +150,20 @@ Module.register("MMM-Fronius2", {
 
         if (wattConversionOptions.enabled) {
             switch (true) {
-                // gigaWatt
+                // GigaWatt
                 case value > threshold * Math.pow(1000, 2):
                     displayValue = (value / Math.pow(1000, 3)).toFixed(wattConversionOptions.numDecimalDigits);
-                    unitString = "gW";
+                    unitString = "GW";
                     break;
-                // megaWatt
+                // MegaWatt
                 case value > threshold * 1000:
                     displayValue = (value / Math.pow(1000, 2)).toFixed(wattConversionOptions.numDecimalDigits);
-                    unitString = "mW";
+                    unitString = "MW";
                     break;
-                // kiloWatt
+                // KiloWatt
                 case value > threshold:
                     displayValue = (value / 1000).toFixed(wattConversionOptions.numDecimalDigits);
-                    unitString = "kW";
+                    unitString = "KW";
                     break;
                 default:
                     displayValue = Math.round(value);

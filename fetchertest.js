@@ -25,20 +25,20 @@ function getWattString(value) {
 
     if (wattConversionOptions.enabled) {
         switch (true) {
-            // gigaWatt
+            // GigaWatt
             case value > threshold * Math.pow(1000, 2):
                 displayValue = (value / Math.pow(1000, 3)).toFixed(wattConversionOptions.numDecimalDigits);
-                wattString = "gW";
+                wattString = "GW";
                 break;
-            // megaWatt
+            // MegaWatt
             case value > threshold * 1000:
                 displayValue = (value / Math.pow(1000, 2)).toFixed(wattConversionOptions.numDecimalDigits);
-                wattString = "mW";
+                wattString = "MW";
                 break;
-            // kiloWatt
+            // KiloWatt
             case value > threshold:
                 displayValue = (value / 1000).toFixed(wattConversionOptions.numDecimalDigits);
-                wattString = "kW";
+                wattString = "KW";
                 break;
             default:
                 displayValue = Math.round(value);
