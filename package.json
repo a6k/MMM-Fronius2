@@ -1,6 +1,6 @@
 {
   "name": "mmm-fronius2",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "MagicMirror module to show information about Fronius power inverter",
   "main": "MMM-Fronius2.js",
   "scripts": {
