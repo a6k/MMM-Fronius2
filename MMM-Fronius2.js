@@ -9,7 +9,7 @@
 Module.register("MMM-Fronius2", {
     defaults: {
         name: "MMM-Fronius2",
-        header: "PV Anlage",
+        header: "Strom",
         hidden: false,
         ip: "192.168.1.12",
         updateInterval: 3000,
@@ -100,7 +100,15 @@ Module.register("MMM-Fronius2", {
     generateDataTable: function () {
         const table = document.createElement("table");
 
-        const energyNowDescription = `${this.translate("ENERGY_NOW")}:`;
+
+	const energyBezugDescription = "Verbrauch";
+        const energyBezugValue = this.getWattString(this.currentData.powerLoad * -1);
+        this.appendTableRow(energyBezugDescription, energyBezugValue, table);
+
+
+
+
+        const energyNowDescription = "PV Produktion";
         if (this.fetchTimeoutError) {
             const energyNowValue = this.translate("CONVERTER_OFFLINE_ENERGY_STATE");
             this.appendTableRow(energyNowDescription, energyNowValue, table, "font-red");
@@ -110,17 +118,34 @@ Module.register("MMM-Fronius2", {
             this.appendTableRow(energyNowDescription, energyNowValue, table, valueColor);
         }
 
-        const energyDayDescription = `${this.translate("ENERGY_DAY")}:`;
-        const energyDayValue = this.getWattString(this.currentData.energyDay);
-        this.appendTableRow(energyDayDescription, energyDayValue, table);
+if (this.currentData.energyNow > 0) {
 
-        const energyYearDescription = `${this.translate("ENERGY_YEAR")}:`;
-        const energyYearValue = this.getWattString(this.currentData.energyYear);
-        this.appendTableRow(energyYearDescription, energyYearValue, table);
+	if (this.currentData.powerGrid < 0) {
+		const energyVerbrauchDescription = "Einspeisung";
+        	const energyVerbrauchValue = this.getWattString(this.currentData.powerGrid * -1);
+        	this.appendTableRow(energyVerbrauchDescription, energyVerbrauchValue, table, "font-green");
+	} else {
+		const energyVerbrauchDescription = "Netz Bezug";
+        	const energyVerbrauchValue = this.getWattString(this.currentData.powerGrid);
+        	this.appendTableRow(energyVerbrauchDescription, energyVerbrauchValue, table, "font-red");
+	}
+}
 
-        const energyTotalDescription = `${this.translate("ENERGY_TOTAL")}:`;
-        const energyTotalValue = this.getWattString(this.currentData.energyTotal);
-        this.appendTableRow(energyTotalDescription, energyTotalValue, table);
+	//const energyVerbrauchDescription = "Netz Bezug";
+	//const energyVerbrauchValue = this.getWattString(this.currentData.powerGrid);
+	//this.appendTableRow(energyVerbrauchDescription, energyVerbrauchValue, table);
+
+        //const energyDayDescription = `${this.translate("ENERGY_DAY")}:`;
+        //const energyDayValue = this.getWattString(this.currentData.energyDay);
+        //this.appendTableRow(energyDayDescription, energyDayValue, table);
+
+        //const energyYearDescription = `${this.translate("ENERGY_YEAR")}:`;
+        //const energyYearValue = this.getWattString(this.currentData.energyYear);
+        //this.appendTableRow(energyYearDescription, energyYearValue, table);
+
+        //const energyTotalDescription = `${this.translate("ENERGY_TOTAL")}:`;
+        //const energyTotalValue = this.getWattString(this.currentData.energyTotal);
+        //this.appendTableRow(energyTotalDescription, energyTotalValue, table);
 
         return table;
     },
